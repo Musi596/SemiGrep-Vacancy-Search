@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block title %}{% if vacancy %}Изменить вакансию{% else %}Новая вакансия{% endif %} — SemiGrep{% endblock %}
+{% block content %}
+<section class="form-layout">
+  <a class="back-link" href="{% url 'vacancy_list' %}">← Все вакансии</a>
+  <div class="page-heading"><div class="eyebrow"><span class="live-dot"></span> ДЛЯ ВАШЕЙ КОМАНДЫ</div><h1>{% if vacancy %}Изменить <span>вакансию</span>{% else %}Найдите своего <span>человека</span>{% endif %}</h1><p>Расскажите о роли — подходящие кандидаты смогут откликнуться.</p></div>
+  <form method="post" class="surface-form">
+    {% csrf_token %}
+    <label for="title">Название вакансии</label><input id="title" name="title" maxlength="100" required value="{{ vacancy.title|default:'' }}" placeholder="Например, дизайнер интерфейсов">
+    <label for="description">Описание</label><textarea id="description" name="description" rows="7" required placeholder="Расскажите о задачах и вашей команде">{{ vacancy.description|default:'' }}</textarea>
+    <div class="form-actions"><a class="text-link" href="{% url 'vacancy_list' %}">Отмена</a><button class="button button-lime" type="submit">{% if vacancy %}Сохранить изменения{% else %}Опубликовать вакансию{% endif %} <span>↗</span></button></div>
+  </form>
+</section>
+{% endblock %}

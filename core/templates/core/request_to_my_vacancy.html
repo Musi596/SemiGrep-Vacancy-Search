@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% block title %}Отклики на мои вакансии — SemiGrep{% endblock %}
+{% block content %}
+<section class="page-section">
+  <div class="page-heading"><div class="eyebrow"><span class="live-dot"></span> ВАШИ ВАКАНСИИ</div><h1>Отклики <span>кандидатов</span></h1><p>Здесь собраны кандидаты, откликнувшиеся на размещённые вами вакансии.</p></div>
+  <div class="application-list owner-application-list">
+    {% for application in requests %}
+      <article class="application-card owner-application-card">
+        <div class="company-avatar candidate-avatar">{{ application.applicant.username|first|upper }}</div>
+        <div class="application-info">
+          <span class="job-open"><span></span>{% if application.status == 'pending' %}ОЖИДАЕТ РАССМОТРЕНИЯ{% elif application.status == 'accepted' %}ПРИНЯТ{% else %}ОТКЛОНЁН{% endif %}</span>
+          <h2>{{ application.applicant_full_name|default:application.applicant.username }}</h2>
+          <p>Отклик на <strong>{{ application.vacancy.title }}</strong><span>·</span>{{ application.created_at|date:'d.m.Y' }}</p>
+          <div class="application-contact-details">
+            {% if application.phone_number %}<span><b>Телефон</b><a href="tel:{{ application.phone_number }}">{{ application.phone_number }}</a></span>{% endif %}
+            {% if application.messenger_contact %}<span><b>{{ application.get_messenger_display }}</b>{{ application.messenger_contact }}</span>{% endif %}
+          </div>
+        </div>
+        <div class="application-actions"><a class="button button-small button-outline" href="{% url 'application_update' application.pk %}">Изменить статус <span>↗</span></a></div>
+      </article>
+    {% empty %}
+      <div class="empty-panel"><div class="empty-orb">✳</div><h2>Пока нет откликов</h2><p>Когда кандидаты откликнутся на ваши вакансии, они появятся здесь.</p><a class="button button-lime" href="{% url 'vacancy_list' %}">К вакансиям <span>↗</span></a></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

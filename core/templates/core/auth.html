@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <title>SemiGrep — {% if title == 'Register' %}Регистрация{% else %}Вход{% endif %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'core/site.css' %}">
+</head>
+<body class="auth-page">
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar wrap">
+    <a class="brand" href="{% url 'vacancy_list' %}" aria-label="SemiGrep, главная"><span class="brand-mark">S<span>.</span></span><span>SemiGrep</span></a>
+    <a class="login-link" href="{% url 'vacancy_list' %}">← К вакансиям</a>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card">
+      <div class="eyebrow"><span class="live-dot"></span> ТВОЙ СЛЕДУЮЩИЙ ШАГ</div>
+      <h1>{% if title == 'Register' %}Создать <span>аккаунт</span>{% else %}С возвращением<span>.</span>{% endif %}</h1>
+      <p class="auth-intro">{% if title == 'Register' %}Присоединяйтесь к SemiGrep и найдите работу, которая подходит.{% else %}Войдите, чтобы продолжить поиск работы.{% endif %}</p>
+      {% if error %}<p class="auth-error" role="alert">{{ error }}</p>{% endif %}
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <label for="username">Имя пользователя</label>
+        <input id="username" name="username" autocomplete="username" required>
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" autocomplete="{% if title == 'Register' %}new-password{% else %}current-password{% endif %}" required>
+        <button class="button button-lime" type="submit">{% if title == 'Register' %}Зарегистрироваться{% else %}Войти{% endif %} <span>↗</span></button>
+      </form>
+      <p class="auth-switch">{% if title == 'Register' %}Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>{% else %}Впервые на SemiGrep? <a href="{% url 'register' %}">Создать аккаунт</a>{% endif %}</p>
+    </section>
+  </main>
+</body>
+</html>

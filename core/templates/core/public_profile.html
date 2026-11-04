@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% block title %}Профиль {{ profile_user.username }} — SemiGrep{% endblock %}
+{% block content %}
+<section class="public-profile-page">
+  <div class="public-profile-heading">
+    {% if profile.avatar %}<img class="public-profile-avatar" src="{{ profile.avatar.url }}" alt="Аватар {{ profile_user.username }}">{% else %}<div class="public-profile-avatar public-profile-initial">{{ profile_user.username|first|upper }}</div>{% endif %}
+    <div><div class="eyebrow"><span class="live-dot"></span> ПРОФИЛЬ УЧАСТНИКА</div><h1>{% if profile_user.get_full_name %}{{ profile_user.get_full_name }}{% else %}{{ profile_user.username }}{% endif %}</h1><p>@{{ profile_user.username }}</p>{% if user.is_authenticated and user.pk == profile_user.pk and profile_user.email %}<p class="profile-private-info"><span>Электронная почта</span>{{ profile_user.email }}</p>{% endif %}</div>
+  </div>
+  <div class="profile-vacancies-heading"><div><div class="eyebrow"><span class="section-index">01</span> ВАКАНСИИ</div><h2>Опубликованные <span>вакансии</span></h2></div><span>{{ vacancies|length }} шт.</span></div>
+  <div class="vacancy-grid profile-vacancy-grid">
+    {% for vacancy in vacancies %}
+      <article class="job-card">
+        <div class="job-top"><span class="job-index">№ {{ forloop.counter|stringformat:"02d" }}</span><span class="job-open"><span></span> ОТКРЫТА</span></div>
+        {% if vacancy.image %}<img class="job-photo" src="{{ vacancy.image.url }}" alt="Фото к вакансии {{ vacancy.title }}" loading="lazy">{% endif %}
+        <h3><a class="job-title-link" href="{% url 'vacancy_detail' vacancy.id %}">{{ vacancy.title }}</a></h3><p class="job-description">{{ vacancy.description|truncatechars:190 }}</p>
+        <div class="job-footer"><div class="company-avatar">{{ profile_user.username|first|upper }}</div><div class="company-info"><b>{{ profile_user.username }}</b><small>Работодатель</small></div><a class="apply-action" href="{% url 'vacancy_detail' vacancy.id %}">Подробнее <span>↗</span></a></div>
+      </article>
+    {% empty %}<div class="empty-panel"><h2>Пока нет вакансий</h2><p>У этого участника ещё нет опубликованных вакансий.</p></div>{% endfor %}
+  </div>
+  {% if user.is_authenticated and user.pk == profile_user.pk %}<div class="profile-edit-footer"><a class="button button-lime" href="{% url 'update_profile' %}">Изменить профиль <span>↗</span></a></div>{% endif %}
+</section>
+{% endblock %}

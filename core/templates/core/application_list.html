@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block title %}Мои отклики — SemiGrep{% endblock %}
+{% block content %}
+<section class="page-section">
+  <div class="page-heading"><div class="eyebrow"><span class="live-dot"></span> ВАШИ ВОЗМОЖНОСТИ</div><h1>Мои <span>отклики</span></h1><p>Следите за вакансиями, на которые вы откликнулись.</p></div>
+  <div class="application-list">
+    {% for application in applications %}
+      <article class="application-card">
+        <div class="company-avatar">{{ application.vacancy.creator.username|first|upper }}</div>
+        <div class="application-info"><span class="job-open"><span></span> {% if application.status == 'pending' %}ОЖИДАЕТ{% elif application.status == 'accepted' %}ПРИНЯТ{% else %}ОТКЛОНЁН{% endif %}</span><h2>{{ application.vacancy.title }}</h2><p>{{ application.vacancy.creator.username }} <span>·</span> Отправлен {{ application.created_at|date:'d.m.Y' }}</p></div>
+        <div class="application-actions">
+          {% if user == application.vacancy.creator or perms.core.manage_applications %}<a class="button button-small button-outline" href="{% url 'application_update' application.id %}">Изменить статус</a>{% endif %}
+          {% if user == application.applicant or perms.core.manage_applications %}<form method="post" action="{% url 'application_delete' application.id %}">{% csrf_token %}<button class="quiet-button" type="submit">Удалить</button></form>{% endif %}
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-panel"><div class="empty-orb">✳</div><h2>Пока нет откликов</h2><p>Найдите интересную вакансию и отправьте первый отклик.</p><a class="button button-lime" href="{% url 'vacancy_list' %}">Смотреть вакансии <span>↗</span></a></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

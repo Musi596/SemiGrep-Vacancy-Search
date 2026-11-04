@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <title>{% block title %}SemiGrep — работа, которая подходит{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'core/site.css' %}">
+  <link rel="stylesheet" href="{% static 'core/features.css' %}">
+</head>
+<body class="app-page">
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar wrap">
+    <a class="brand" href="{% url 'vacancy_list' %}" aria-label="SemiGrep, главная"><span class="brand-mark">S<span>.</span></span><span>SemiGrep</span></a>
+    <nav class="nav-links" aria-label="Основная навигация">
+      <a href="{% url 'vacancy_list' %}">Вакансии</a>
+      {% if user.is_authenticated %}<a href="{% url 'application_list' %}">Мои отклики</a><a href="{% url 'my_vacancy_applications' %}">Отклики на мои вакансии</a><a href="{% url 'favorite_list' %}">Избранное</a><a href="{% url 'ai_assistant' %}">ИИ-помощник</a><a href="{% url 'profile' %}">Профиль</a>{% endif %}
+    </nav>
+    <div class="nav-actions">
+      {% if user.is_authenticated %}<a class="button button-small button-outline" href="{% url 'ai_assistant' %}">Спросить ИИ</a><a class="button button-small button-outline" href="{% url 'vacancy_create' %}">＋ Разместить вакансию</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="avatar" title="Выйти">{{ user.username|first|upper }}</button></form>
+      {% else %}<a class="login-link" href="{% url 'login' %}">Войти</a><a class="button button-small button-lime" href="{% url 'register' %}">Создать аккаунт <span>↗</span></a>{% endif %}
+    </div>
+  </header>
+  <main class="page-content wrap">{% block content %}{% endblock %}</main>
+  <footer class="footer wrap"><a class="brand" href="{% url 'vacancy_list' %}"><span class="brand-mark">S<span>.</span></span><span>SemiGrep</span></a><span>Работа, которая подходит.</span><span>© 2026 SEMIGREP</span></footer>
+</body>
+</html>

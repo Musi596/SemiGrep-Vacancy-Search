@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}ИИ-помощник — SemiGrep{% endblock %}
+{% block content %}
+<section class="chat-page">
+  <header class="chat-heading">
+    <div class="chat-mark">p<span>.</span></div>
+    <div><h1>SemiGrep <span>AI</span></h1><p>Помощник по поиску работы</p></div>
+    <span class="chat-status">ИИ-помощник</span>
+  </header>
+  {% if vacancy %}<div class="chat-vacancy-context"><span>ВОПРОС ПО ВАКАНСИИ</span><a href="{% url 'vacancy_detail' vacancy.id %}">{{ vacancy.title }} ↗</a><small>Ответы будут учитывать описание вакансии из базы данных.</small></div>{% endif %}
+  <div class="chat-feed" id="chat-feed" aria-live="polite">
+    {% if not messages %}
+      <div class="chat-welcome"><div class="welcome-orb">✳</div><h2>С чего начнём?</h2><p>Спросите про резюме, собеседование или поиск работы.</p><div class="prompt-suggestions"><button type="button" data-prompt="Как улучшить резюме?">Как улучшить резюме?</button><button type="button" data-prompt="Что спросить на собеседовании?">Что спросить на собеседовании?</button><button type="button" data-prompt="Как подготовиться к интервью?">Как подготовиться к интервью?</button></div></div>
+    {% else %}
+      {% for message in messages %}
+        <article class="chat-message {% if message.role == 'user' %}chat-message-user{% else %}chat-message-ai{% endif %}">
+          {% if message.role == 'assistant' %}<div class="chat-avatar">p<span>.</span></div>{% endif %}
+          <div class="chat-bubble">{{ message.content|linebreaksbr }}</div>
+        </article>
+      {% endfor %}
+    {% endif %}
+    {% if error %}<p class="auth-error" role="alert">{{ error }}</p>{% endif %}
+  </div>
+  <form method="post" class="chat-composer" id="chat-form">
+    {% csrf_token %}
+    {% if vacancy %}<input type="hidden" name="vacancy_id" value="{{ vacancy.id }}">{% endif %}
+    <label class="visually-hidden" for="message">Ваше сообщение</label>
+    <textarea id="message" name="message" rows="1" maxlength="2000" placeholder="Напишите сообщение…" required></textarea>
+    <button type="submit" aria-label="Отправить сообщение">↑</button>
+    <small>ИИ может ошибаться. Проверяйте важную информацию.</small>
+  </form>
+</section>
+<script>
+  const feed = document.getElementById('chat-feed');
+  feed.scrollTop = feed.scrollHeight;
+  const input = document.getElementById('message');
+  input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 160)}px`; });
+  input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); input.form.requestSubmit(); } });
+  document.querySelectorAll('[data-prompt]').forEach(button => button.addEventListener('click', () => { input.value = button.dataset.prompt; input.form.requestSubmit(); }));
+</script>
+{% endblock %}

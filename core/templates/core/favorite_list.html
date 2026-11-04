@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block title %}Избранные вакансии — SemiGrep{% endblock %}
+{% block content %}
+<section class="page-section">
+  <div class="page-heading"><div class="eyebrow"><span class="live-dot"></span> СОХРАНЁННОЕ</div><h1>Избранные <span>вакансии</span></h1><p>Вакансии, к которым вы хотите вернуться.</p></div>
+  <div class="application-list">
+    {% for favorite in favorites %}
+      <article class="application-card favorite-card">
+        {% if favorite.vacancy.image %}<img class="favorite-thumb" src="{{ favorite.vacancy.image.url }}" alt="" loading="lazy">{% else %}<div class="company-avatar">{{ favorite.vacancy.creator.username|first|upper }}</div>{% endif %}
+        <div class="application-info"><span class="job-open"><span></span> ВАКАНСИЯ</span><h2><a href="{% url 'vacancy_detail' favorite.vacancy.id %}">{{ favorite.vacancy.title }}</a></h2><p><a href="{% url 'public_profile' favorite.vacancy.creator.username %}">{{ favorite.vacancy.creator.get_full_name|default:favorite.vacancy.creator.username }}</a></p></div>
+        <div class="application-actions"><a class="button button-outline button-small" href="{% url 'vacancy_detail' favorite.vacancy.id %}">Подробнее ↗</a><form method="post" action="{% url 'toggle_favorite' favorite.vacancy.id %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'favorite_list' %}"><button class="quiet-button" type="submit">Убрать ★</button></form></div>
+      </article>
+    {% empty %}
+      <div class="empty-panel"><div class="empty-orb">☆</div><h2>Здесь пока пусто</h2><p>Добавляйте интересные вакансии в избранное, чтобы сохранить их здесь.</p><a class="button button-lime" href="{% url 'vacancy_list' %}#vacancies">Посмотреть вакансии ↗</a></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

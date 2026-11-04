@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% block title %}Отклик на вакансию — SemiGrep{% endblock %}
+{% block content %}
+<section class="form-layout application-create-layout">
+  <a class="back-link" href="{% url 'vacancy_list' %}">← Все вакансии</a>
+  <div class="page-heading"><div class="eyebrow"><span class="live-dot"></span> ВАШ СЛЕДУЮЩИЙ ШАГ</div><h1>Отклик на <span>вакансию</span></h1><p>Оставьте контакты, чтобы работодатель мог связаться с вами.</p></div>
+  <div class="application-vacancy-summary"><span>ВАКАНСИЯ</span><strong>{{ vacancy.title }}</strong><small>{{ vacancy.creator.username }}</small></div>
+  {% if error %}<p class="auth-error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" class="surface-form">
+    {% csrf_token %}
+    <label for="applicant_full_name">ФИО</label>
+    <input id="applicant_full_name" name="applicant_full_name" maxlength="150" autocomplete="name" required value="{{ form_data.applicant_full_name|default:'' }}" placeholder="Иванов Иван Иванович">
+    <label for="phone_number">Номер телефона</label>
+    <input id="phone_number" name="phone_number" type="tel" maxlength="32" autocomplete="tel" required value="{{ form_data.phone_number|default:'' }}" placeholder="+7 900 000-00-00">
+    <label for="messenger">Куда написать</label>
+    <select id="messenger" name="messenger" required>
+      <option value="" disabled {% if not form_data.messenger %}selected{% endif %}>Выберите мессенджер</option>
+      {% for value, label in messenger_choices %}<option value="{{ value }}" {% if form_data.messenger == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <label for="messenger_contact">Контакт в Telegram или WhatsApp</label>
+    <input id="messenger_contact" name="messenger_contact" maxlength="100" required value="{{ form_data.messenger_contact|default:'' }}" placeholder="@username или номер WhatsApp">
+    <p class="form-note">Эти контакты будут видны владельцу вакансии, на которую вы откликаетесь.</p>
+    <div class="form-actions"><a class="text-link" href="{% url 'vacancy_list' %}">Отмена</a><button class="button button-lime" type="submit">Отправить отклик <span>↗</span></button></div>
+  </form>
+</section>
+{% endblock %}
